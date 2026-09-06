@@ -21,6 +21,7 @@ jobs:
           manifest-file: .release-please-manifest.json
           config-file: release-please-config.json
           skip-github-pull-request: true
+          include-component-in-tag: true
 
       - name: 產出 POC 版本定版證據檔案
         if: ${{ steps.release.outputs.releases_created == 'true' }}
