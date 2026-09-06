@@ -11,3 +11,5 @@ Minor version feature test
 Minor version feature test
 
 Minor release test for App A
+
+Nx Minor release test for App A
