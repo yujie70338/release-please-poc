@@ -2,6 +2,7 @@
   "name": "release-please-poc",
   "private": true,
   "devDependencies": {
+    "@nx/js": "^23.2.0",
     "nx": "^23.2.0"
   }
 }
