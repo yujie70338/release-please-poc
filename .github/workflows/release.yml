@@ -32,8 +32,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Version, tag, and publish GitHub Releases
-        run: npx nx release --yes --skip-publish --git-commit --git-tag --git-push
+      - name: Version, tag, and create GitHub Releases
+        run: npx nx release version --git-commit --git-tag --git-push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
