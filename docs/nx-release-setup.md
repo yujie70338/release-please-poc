@@ -101,7 +101,7 @@ on:
 Workflow 執行：
 
 ```bash
-npx nx release version --git-commit --git-tag --git-push
+npx nx release version --git-tag --git-push
 ```
 
 流程如下：
@@ -109,7 +109,7 @@ npx nx release version --git-commit --git-tag --git-push
 1. 將功能 PR 合併到 `main`。
 2. `push` 事件啟動 GitHub Actions。
 3. Nx 解析 Conventional Commits，更新有變更的 service 版本。
-4. Nx 建立版本提交、Tag，並推送回 Repository。
+4. Nx 建立 Tag，並推送回 Repository；目前不建立 release commit。
 
 Workflow 使用以下權限：
 
@@ -204,23 +204,27 @@ Resolved current version ... new version 1.1.0
 No files changed as a result of running versioning
 ```
 
-新增每個 service 的 `package.json` 後，Nx 才有實際版本檔案可以更新，並能建立
-版本提交與 Tag。
+移除 App B 的 `package.json` 作為實驗時，Actions 仍會從 Git history 計算 `3.0.0`，
+但因沒有可更新的 manifest，會顯示 `No files changed as a result of running versioning`，
+也不會建立 `app-b-v3.0.0`。測試結束後，已恢復
+`images/app-b/package.json`，版本設為目前最新 Tag 的 `2.0.0`。
 
-### 4. Tag-only 不符合目前流程
+### 4. Tag-only 實驗結果
 
-目前命令包含 `--git-commit`，所以 Nx 會建立版本提交。這個提交保存
-`package.json` 與 changelog 的版本變更，Tag 會指向該提交。
-
-若移除 `--git-commit`，版本檔案可能留在未提交狀態，而 Tag 會指向舊的 `HEAD`。
-因此 POC 保留完整流程：
+目前 workflow 使用：
 
 ```text
-版本檔案更新 → release commit → Git Tag → push
+版本計算 → Git Tag → push
 ```
 
-若需求是完全不修改版本檔案、只建立 Tag，則需要自訂腳本計算 SemVer 和建立 Tag；
-這不屬於 Nx Release 的標準版本流程。
+在 commit `94a3d70fa878e7ae5202905184fa7ff0f1b767b9` 的測試中，Actions 成功但沒有
+建立 `app-b-v3.0.0`，也沒有新增 release commit。GitHub CLI 確認：
+
+```text
+workflow: success
+latest tag: app-b-v2.0.0
+missing tag: app-b-v3.0.0
+```
 
 ## 參考資料
 
