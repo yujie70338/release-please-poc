@@ -15,3 +15,5 @@ Minor release test for App A
 Nx Minor release test for App A
 
 Nx Minor release verification
+
+Nx Minor release verification
