@@ -7,3 +7,5 @@ Patch version test
 Patch version verification
 
 Minor version feature test
+
+Minor version feature test
