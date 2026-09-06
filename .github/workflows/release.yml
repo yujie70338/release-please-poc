@@ -1,4 +1,4 @@
-name: POC Release Please
+name: Nx Release
 
 on:
   push:
@@ -7,38 +7,55 @@ on:
 
 permissions:
   contents: write
-  issues: write
-  pull-requests: write
 
 jobs:
-  release-please:
+  release:
     runs-on: ubuntu-latest
     steps:
-      - name: 執行 Release Please 工具
-        id: release
-        uses: googleapis/release-please-action@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          manifest-file: .release-please-manifest.json
-          config-file: release-please-config.json
-          skip-github-pull-request: true
-          include-component-in-tag: true
+          fetch-depth: 0
+          fetch-tags: true
 
-      - name: 產出 POC 版本定版證據檔案
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Configure Git identity
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Version, tag, and publish GitHub Releases
+        run: npx nx release --yes --skip-publish --git-commit --git-tag --git-push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate POC release evidence
+        if: ${{ success() }}
+        run: |
+          git fetch --tags
           {
-            echo "=== POC 版本定版證據 ==="
-            echo "觸發時間: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
-            echo "本次發布的專案路徑: ${{ steps.release.outputs.paths_released }}"
-            echo "App A 最新版本: ${{ steps.release.outputs['images/app-a--version'] }}"
-            echo "App B 最新版本: ${{ steps.release.outputs['images/app-b--version'] }}"
-            echo "========================"
+            echo "=== POC Nx Release evidence ==="
+            echo "Trigger time: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+            echo "App A latest tag: $(git tag --list 'app-a-v*' --sort=-version:refname | head -n 1)"
+            echo "App B latest tag: $(git tag --list 'app-b-v*' --sort=-version:refname | head -n 1)"
+            echo "All release tags:"
+            git tag --list 'app-*-v*' --sort=version:refname
+            echo "=============================="
           } > poc_evidence.txt
           cat poc_evidence.txt
 
-      - name: 上傳 POC 證據至 GitHub Artifacts
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
+      - name: Upload POC evidence
+        if: ${{ success() }}
         uses: actions/upload-artifact@v4
         with:
-          name: release-evidence
+          name: nx-release-evidence
           path: poc_evidence.txt

@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "release": {
+    "projects": ["app-a", "app-b"],
+    "projectsRelationship": "independent",
+    "version": {
+      "conventionalCommits": true
+    },
+    "releaseTag": {
+      "pattern": "{projectName}-v{version}"
+    },
+    "changelog": {
+      "projectChangelogs": {
+        "createRelease": "github"
+      }
+    }
+  }
+}

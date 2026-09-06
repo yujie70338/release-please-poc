@@ -1,0 +1,7 @@
+{
+  "name": "release-please-poc",
+  "private": true,
+  "devDependencies": {
+    "nx": "^23.2.0"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "app-a",
+  "root": "images/app-a",
+  "sourceRoot": "images/app-a",
+  "projectType": "application"
+}
