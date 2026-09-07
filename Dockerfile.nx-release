@@ -10,8 +10,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --include=dev --ignore-scripts --no-audit --no-fund \
     && npm cache clean --force
 
-# npm only adds node_modules/.bin to PATH when running an npm script. Docker
-# ENTRYPOINT does not, so add the project-local Nx binary explicitly.
+# add project-local nx release version to PATH
 ENV PATH="/workspace/node_modules/.bin:${PATH}"
 
 # Pass release behavior at runtime, for example --dry-run, --git-tag, or
